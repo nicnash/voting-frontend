@@ -1,3 +1,4 @@
-{{idea.count}} - {{idea.title}} {{!-- {{action 'up' this}} {{action 'down' this}} --}}
-  <button {{action 'up'}}>up</button>
-  <button {{action 'down'}}>down</button>
+<button {{action 'up' }} class="voting" >up</button>{{idea.title}}  <br>
+<span class="voting">{{idea.count}}</span>{{idea.body}}<br>
+<button {{action 'down' }} class="voting">down</button> <br><br>
+  
