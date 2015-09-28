@@ -16,6 +16,13 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+
+  };
+
+  ENV['torii'] = {  
+    providers: {
+      'voting':{}
     }
   };
 
@@ -42,6 +49,7 @@ module.exports = function(environment) {
   if (environment === 'production') {
 
   }
-
+  ENV['simple-auth'] = { authorizer: 
+                 'simple-auth-authorizer:torii'}
   return ENV;
 };
