@@ -3,6 +3,7 @@ import DS from 'ember-data';
 // export default ActiveModelAdapter.extend();
 
 export default DS.ActiveModelAdapter.extend({
+	// host: 'http://localhost:4200/api'
 });
 // export default DS.RESTAdapter.extend({
 //     host: 'http://localhost:4200/api'

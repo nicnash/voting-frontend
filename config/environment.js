@@ -20,11 +20,11 @@ module.exports = function(environment) {
 
   };
 
-  ENV['torii'] = {  
-    providers: {
-      'voting':{}
-    }
-  };
+  // ENV['torii'] = {  
+  //   providers: {
+  //     'voting':{}
+  //   }
+  // };
 
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
@@ -33,6 +33,7 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
   }
+
 
   if (environment === 'test') {
     // Testem prefers this...
@@ -49,6 +50,10 @@ module.exports = function(environment) {
   if (environment === 'production') {
 
   }
+
+  ENV.contentSecurityPolicy = {
+    'connect-src': "'self' http://127.0.0.1:3000"
+  };
 
   return ENV;
 };
