@@ -1,0 +1,78 @@
+import Ember from 'ember';
+import Base from 'ember-simple-auth/authenticators/base';
+import config from '../config/environment';
+
+const { RSVP, run } = Ember;
+
+export default Base.extend({
+  tokenPropertyName: 'token',
+  tokenExpireName: 'exp',
+  restore: function(data) {
+    let _this = this;
+
+    return new Ember.RSVP.Promise(function(resolve, reject) {
+      const decodedToken = _this.getTokenData(data.token);
+      const now = (new Date()).getTime();
+      const expiresAt = decodedToken[_this.tokenExpireName];
+
+      if (Ember.isEmpty(data.token)) {
+        return reject(new Error('empty token'));
+      }
+
+      if (Ember.isEmpty(expiresAt)) {
+        return resolve(data);
+      }
+
+      if (expiresAt > now) {
+        return reject(new Error('token is expired'));
+      }
+      else {
+        return resolve(data);
+      }
+    });
+  },
+  authenticate(credentials) {
+    let _this = this;
+    return new RSVP.Promise((resolve, reject) => {
+      this.makeRequest(credentials).then((response) => {
+        localStorage.tokenData = _this.parseToken(response.token);
+        run(null, resolve, response);
+      }, function(xhr) {
+        run(null, reject, xhr.responseJSON || xhr.responseText);
+      });
+    });
+  },
+  invalidate() {
+    delete localStorage.tokenData;
+    return RSVP.resolve();
+  },
+  makeRequest(credentials) {
+    return Ember.$.ajax({
+      url:      config.API_PREFIX + '/token',
+      type:     'GET',
+      dataType: 'json',
+      beforeSend(xhr) {
+        xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(`${credentials.identification}:${credentials.password}`));
+      }
+    });
+  },
+  parseToken: function(token) {
+    let tokenData = window.atob(token.split('.')[1]);
+    return tokenData;
+  },
+  getTokenData: function(token) {
+    let tokenData = this.parseToken(token);
+    try {
+      return JSON.parse(tokenData);
+    } catch (e) {
+      //jshint unused:false
+      return tokenData;
+    }
+  },
+  resolveTime: function(time) {
+    if (Ember.isEmpty(time)) {
+      return time;
+    }
+    return new Date(time).getTime();
+  }
+});
